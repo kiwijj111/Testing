@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Contact Us - FoodFusion</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<?php 
+session_start();
+// check if user is logged in
+if (!isset($_SESSION['email'])) {
+    header("location:login.php");
+    exit();
+}
+ $email=$_SESSION['email'];
+include("dbconnect.php"); ?>
+
+<body>
+ <header>
+        <div class="header-container">
+            <div class="logo">Food<span>Fusion</span></div>
+            <nav>
+                <ul>
+                    <li><a href="index.php">Home</a></li>
+                    <li><a href="about.php">About Us</a></li>
+                    <li><a href="recipes.php">Recipes</a></li>
+                    <li><a href="cookbook.php">Post Cookbook</a></li>
+                    <li><a href="cookbookForum.php">Cookbook Forum</a></li>
+                    <li><a href="contact.php"class="active">Contact</a></li>
+                    <li><a href="culinary.php">Culinary Resources</a></li>
+                    <li><a href="educational.php">Educational Resources</a></li>
+                    <li><a href="logout.php">Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+<?php
+session_start();
+$_SESSION['email']=$email;
+
+include("dbconnect.php");
+// get logged-in user details
+$sql1 = "SELECT * FROM users WHERE email='$email'";
+$r = $connect->query($sql1);
+$row = $r->fetch_assoc();
+$user_id = $row['user_id']; 
+$username = $row['first_name'] . " " . $row['last_name'];
+if(Isset($_GET['btnSend']))
+{
+    $sub=$_GET['sub'];
+    $msg=$_GET['msg'];
+    $sql="INSERT INTO contact_messages (message_id, name, email, subject, message,created_at) VALUES (NULL, '$name', '$email', '$sub', '$msg', current_timestamp())"; 
+    if($connect->query($sql)==TRUE)
+    {
+        echo "Insert successfully";
+        header("location:contact.php");
+    }
+
+}
+?>
+
+<div class="container">
+    <h1>Contact Us</h1>
+    <p>We’d love to hear from you! Send us your feedback or recipe requests.</p>
+
+    <div class="card">
+        <form method="GET" action=#>
+            <input type="text" placeholder="Subject" name="sub" >
+            <textarea placeholder="Your Message" name="msg" required></textarea>
+            <button type="submit" name="btnSend">Send Message</button>
+        </form>
+    </div>
+</div>
+
+<footer>
+    <p>&copy; 2025 FoodFusion | <a href="privacypolicy.php">Privacy Policy</a> | <a href="#">Cookie Policy</a></p>
+    <p>Follow us: <a href="https://www.facebook.com">Facebook</a> | <a href="https://www.instagram.com">Instagram</a> | <a href="https://www.youtube.com">YouTube</a></p>
+</footer>
+
+</body>
+</html>
